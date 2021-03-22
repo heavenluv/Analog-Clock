@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <title>JS Clock</title>
+    <link rel="stylesheet" href="newstyle.css">
+</head>
+
+<body>
+    
+    <div class="clock">
+        <canvas id="canvas1" width="1200" height="1200"></canvas>
+        <div class="hour">
+            <div class="hr" id="hr">
+    
+            </div>
+        </div>
+        <div class="min">
+            <div class="mn" id="mn">
+    
+            </div>
+        </div>
+        <div class="sec">
+            <div class="sc" id="sc">
+    
+            </div>
+        </div>
+        <div class="time" id="bar">
+    
+        </div>
+    </div>
+    <script type="text/javascript">
+        const deg = 6;
+        const hr = document.querySelector("#hr");
+        const mn = document.querySelector("#mn");
+        const sc = document.querySelector("#sc");
+        const bartime = document.querySelector("#bar");
+        var canvas = document.getElementById("canvas1");
+        var ctx = canvas.getContext('2d');
+        function init() {
+            window.requestAnimationFrame(draw);
+        }
+        
+        function draw(now){
+            let endpt = 3 * Math.PI / 2;
+            var x = canvas.width / 2;
+            var y = canvas.height / 2;
+            var radius = (canvas.width / 7) * 2;
+            let date = new Date();
+            sec = date.getSeconds();
+            ms = date.getMilliseconds();
+            radS = 0.006 * ((sec * 1000) + ms);
+            drawCircle(x, y, radius, 0, Math.PI * 2, false, '#546E7A', 'stroke', 24); //secondgrey
+            drawCircle(x, y, radius, endpt, rad(radS) + endpt, false, '#acdf87', 'stroke', 26); //second
+            requestAnimationFrame(draw); // loop at screen refresh rate
+        }
+        init();
+        function rad(deg) {
+            return (Math.PI / 180) * deg;
+        }
+        function drawArc(x, y, radius, start, end, clockwise) {
+            ctx.beginPath();
+            ctx.arc(x, y, radius, start, end, clockwise);
+        }
+        function drawCircle(x, y, radius, start, end, clockwise, color, type, thickness) {
+            if (type == 'fill') {
+                ctx.fillStyle = color;
+                drawArc(x, y, radius, start, end, clockwise)
+                ctx.fill();
+            }
+            else if (type == 'stroke') {
+                ctx.strokeStyle = color;
+                ctx.lineWidth = thickness;
+                drawArc(x, y, radius, start, end, clockwise)
+                ctx.stroke();
+            }
+        }
+
+        setInterval(() => {
+            let day = new Date();
+            let hh = day.getHours() * 30;
+            let mm = day.getMinutes() * deg;
+            let ss = day.getSeconds() * deg;
+            hr.style.transform = `rotateZ(${hh + (mm / 12)}deg)`;
+            mn.style.transform = `rotateZ(${mm}deg)`;
+            sc.style.transform = `rotateZ(${ss}deg)`;
+            hrnow = (day.getHours().toString().length == 1 )? '0'+day.getHours().toString() : day.getHours().toString();
+            mnnow = (day.getMinutes().toString().length == 1) ? '0' + day.getMinutes().toString() : day.getMinutes().toString();
+            scnow = (day.getSeconds().toString().length == 1) ? '0' + day.getSeconds().toString() : day.getSeconds().toString();
+            bartime.innerHTML = '<span>' + '<strong>' + hrnow + '</strong>' + ':' + mnnow + ':' + '<small>' + scnow + '</small>' + '</span>';
+            
+        })
+        
+    
+        
+    </script>
+</body>
+
+</html>
